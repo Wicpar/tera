@@ -1,4 +1,5 @@
 use std::collections::HashMap;
+use serde::{Deserialize, Serialize};
 
 use crate::errors::{Error, Result};
 use crate::parser::ast::{Block, MacroDefinition, Node};
@@ -7,7 +8,7 @@ use crate::parser::{parse, remove_whitespace};
 /// This is the parsed equivalent of a template file.
 /// It also does some pre-processing to ensure it does as little as possible at runtime
 /// Not meant to be used directly.
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Template {
     /// Name of the template, usually very similar to the path
     pub name: String,

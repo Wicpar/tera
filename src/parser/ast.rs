@@ -1,8 +1,9 @@
 use std::collections::HashMap;
 use std::fmt;
+use serde::{Deserialize, Serialize};
 
 /// Whether to remove the whitespace of a `{% %}` tag
-#[derive(Clone, Copy, Debug, PartialEq, Default)]
+#[derive(Clone, Copy, Debug, PartialEq, Default, Serialize, Deserialize)]
 pub struct WS {
     /// `true` if the tag is `{%-`
     pub left: bool,
@@ -11,7 +12,7 @@ pub struct WS {
 }
 
 /// All math operators
-#[derive(Copy, Clone, Debug, PartialEq)]
+#[derive(Copy, Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub enum MathOperator {
     /// +
     Add,
@@ -42,7 +43,7 @@ impl fmt::Display for MathOperator {
 }
 
 /// All logic operators
-#[derive(Copy, Clone, Debug, PartialEq)]
+#[derive(Copy, Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub enum LogicOperator {
     /// >
     Gt,
@@ -82,7 +83,7 @@ impl fmt::Display for LogicOperator {
 }
 
 /// A function call, can be a filter or a global function
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct FunctionCall {
     /// The name of the function
     pub name: String,
@@ -91,7 +92,7 @@ pub struct FunctionCall {
 }
 
 /// A mathematical expression
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct MathExpr {
     /// The left hand side of the expression
     pub lhs: Box<Expr>,
@@ -102,7 +103,7 @@ pub struct MathExpr {
 }
 
 /// A logical expression
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct LogicExpr {
     /// The left hand side of the expression
     pub lhs: Box<Expr>,
@@ -113,7 +114,7 @@ pub struct LogicExpr {
 }
 
 /// Can only be a combination of string + ident or ident + ident
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct StringConcat {
     /// All the values we're concatening into a string
     pub values: Vec<ExprVal>,
@@ -135,7 +136,7 @@ impl StringConcat {
 }
 
 /// Something that checks whether the left side is contained in the right side
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct In {
     /// The needle, a string or a basic expression/literal
     pub lhs: Box<Expr>,
@@ -146,7 +147,7 @@ pub struct In {
 }
 
 /// An expression is the node found in variable block, kwargs and conditions.
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 #[allow(missing_docs)]
 pub enum ExprVal {
     String(String),
@@ -168,7 +169,7 @@ pub enum ExprVal {
 
 /// An expression is a value that can be negated and followed by
 /// optional filters
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct Expr {
     /// The expression we are evaluating
     pub val: ExprVal,
@@ -214,7 +215,7 @@ impl Expr {
 }
 
 /// A test node `if my_var is odd`
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct Test {
     /// Which variable is evaluated
     pub ident: String,
@@ -227,7 +228,7 @@ pub struct Test {
 }
 
 /// A filter section node `{{ filter name(param="value") }} content {{ endfilter }}`
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct FilterSection {
     /// The filter call itsel
     pub filter: FunctionCall,
@@ -236,7 +237,7 @@ pub struct FilterSection {
 }
 
 /// Set a variable in the context `{% set val = "hey" %}`
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct Set {
     /// The name for that value in the context
     pub key: String,
@@ -248,7 +249,7 @@ pub struct Set {
 }
 
 /// A call to a namespaced macro `macros::my_macro()`
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct MacroCall {
     /// The namespace we're looking for that macro in
     pub namespace: String,
@@ -259,7 +260,7 @@ pub struct MacroCall {
 }
 
 /// A Macro definition
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct MacroDefinition {
     /// The macro name
     pub name: String,
@@ -270,7 +271,7 @@ pub struct MacroDefinition {
 }
 
 /// A block definition
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct Block {
     /// The block name
     pub name: String,
@@ -279,7 +280,7 @@ pub struct Block {
 }
 
 /// A forloop: can be over values or key/values
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct Forloop {
     /// Name of the key in the loop (only when iterating on map-like objects)
     pub key: Option<String>,
@@ -294,7 +295,7 @@ pub struct Forloop {
 }
 
 /// An if/elif/else condition with their respective body
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct If {
     /// First item if the if, all the ones after are elif
     pub conditions: Vec<(WS, Expr, Vec<Node>)>,
@@ -303,7 +304,7 @@ pub struct If {
 }
 
 /// All Tera nodes that can be encountered
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub enum Node {
     /// A call to `{{ super() }}` in a block
     Super,
